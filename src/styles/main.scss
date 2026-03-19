@@ -280,12 +280,10 @@ button {
 
 .row-break {
   flex-basis: 100%;
-  height: 0;
   padding: 0 !important;
 
   // The button inside sits at the start of the new line
   button {
-    margin-top: $spacing-xs;
     min-width: 110px;  // prevents layout shift when text changes between "▶ Play once" / "■ Stop"
   }
 }
@@ -295,7 +293,7 @@ button {
 .autoplay-row {
   #autoplay-btn {
     margin-left: auto;
-    min-width: 80px;  // prevents layout shift between "Play" / "Stop"
+    min-width: 110px;  // prevents layout shift between "▶ Auto play" / "■ Stop"
   }
 }
 

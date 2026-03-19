@@ -2,6 +2,7 @@ import { Synth } from './audio/synth.js'
 import { Scheduler } from './audio/scheduler.js'
 import { buildSequence } from './music/arpeggio.js'
 import { CLICK_NOTE, COUNTDOWN_BEATS } from './config.js'
+import { PRESETS } from './music/presets.js'
 import { ToggleRow } from './ui/toggle-row.js'
 import { RootSelector } from './ui/root-selector.js'
 import { PresetSelector } from './ui/preset-selector.js'
@@ -221,6 +222,13 @@ tempoControls.onSubdivisionChange(() => {
 // ---------------------------------------------------------------------------
 // Initial state
 // ---------------------------------------------------------------------------
+
+// Apply default preset (Major scale root to fifth)
+const defaultPreset = PRESETS[0]
+toggleRow.setActiveIntervals(defaultPreset.intervals)
+directionSelector.setValue(defaultPreset.direction)
+const presetSelectEl = document.getElementById('preset-select') as HTMLSelectElement | null
+if (presetSelectEl !== null) presetSelectEl.value = '0'
 
 toggleRow.updateLabels(currentRootIndex)
 updatePlayButtons()
