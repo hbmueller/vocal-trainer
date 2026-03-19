@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vocal Trainer</title>
+    <link rel="stylesheet" href="/src/styles/main.scss" />
+  </head>
+  <body>
+    <div id="app">
+
+      <!-- Toggle row -->
+      <section class="toggle-row-section">
+        <div id="toggle-row-container">
+          <div id="playback-marker"></div>
+
+          <div id="toggle-row">
+            <label class="toggle-label">
+              <input type="checkbox" class="interval-toggle" />
+              <span class="note-name">C</span>
+              <span class="interval-label">1</span>
+            </label>
+            <label class="toggle-label">
+              <input type="checkbox" class="interval-toggle" />
+              <span class="note-name">C#</span>
+              <span class="interval-label">&#x266F;1</span>
+            </label>
+            <label class="toggle-label">
+              <input type="checkbox" class="interval-toggle" />
+              <span class="note-name">D</span>
+              <span class="interval-label">2</span>
+            </label>
+            <label class="toggle-label">
+              <input type="checkbox" class="interval-toggle" />
+              <span class="note-name">D#</span>
+              <span class="interval-label">&#x266F;2</span>
+            </label>
+            <label class="toggle-label">
+              <input type="checkbox" class="interval-toggle" />
+              <span class="note-name">E</span>
+              <span class="interval-label">3</span>
+            </label>
+            <label class="toggle-label">
+              <input type="checkbox" class="interval-toggle" />
+              <span class="note-name">F</span>
+              <span class="interval-label">4</span>
+            </label>
+            <label class="toggle-label">
+              <input type="checkbox" class="interval-toggle" />
+              <span class="note-name">F#</span>
+              <span class="interval-label">&#x266F;4</span>
+            </label>
+            <label class="toggle-label">
+              <input type="checkbox" class="interval-toggle" />
+              <span class="note-name">G</span>
+              <span class="interval-label">5</span>
+            </label>
+            <label class="toggle-label">
+              <input type="checkbox" class="interval-toggle" />
+              <span class="note-name">G#</span>
+              <span class="interval-label">&#x266F;5</span>
+            </label>
+            <label class="toggle-label">
+              <input type="checkbox" class="interval-toggle" />
+              <span class="note-name">A</span>
+              <span class="interval-label">6</span>
+            </label>
+            <label class="toggle-label">
+              <input type="checkbox" class="interval-toggle" />
+              <span class="note-name">A#</span>
+              <span class="interval-label">&#x266F;6</span>
+            </label>
+            <label class="toggle-label">
+              <input type="checkbox" class="interval-toggle" />
+              <span class="note-name">B</span>
+              <span class="interval-label">7</span>
+            </label>
+            <label class="toggle-label">
+              <input type="checkbox" class="interval-toggle" />
+              <span class="note-name">C&#x2019;</span>
+              <span class="interval-label">8</span>
+            </label>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Controls row -->
+      <section class="controls-row">
+        <div class="control-group">
+          <label class="control-label">Root</label>
+          <select id="root-note-select">
+            <option value="0">C</option>
+            <option value="1">C#</option>
+            <option value="2">D</option>
+            <option value="3">D#</option>
+            <option value="4">E</option>
+            <option value="5">F</option>
+            <option value="6">F#</option>
+            <option value="7">G</option>
+            <option value="8">G#</option>
+            <option value="9">A</option>
+            <option value="10">A#</option>
+            <option value="11">B</option>
+          </select>
+          <select id="root-octave-select">
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4" selected>4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <button id="play-btn">&#x25B6; Play once</button>
+        </div>
+
+        <div class="control-group">
+          <label for="preset-select" class="control-label">Preset</label>
+          <select id="preset-select">
+            <option value="">— preset —</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <label for="direction-select" class="control-label">Direction</label>
+          <select id="direction-select">
+            <option value="up">Up</option>
+            <option value="down">Down</option>
+            <option value="up-down">Up &amp; Down</option>
+            <option value="down-up">Down &amp; Up</option>
+          </select>
+        </div>
+      </section>
+
+      <!-- Tempo row -->
+      <section class="controls-row">
+        <div class="control-group">
+          <input type="number" id="bpm-input" min="40" max="240" value="100" />
+          <label for="bpm-input" class="control-label">BPM</label>
+        </div>
+
+        <div class="control-group">
+          <label for="subdivision-select" class="control-label">Note</label>
+          <select id="subdivision-select">
+            <option value="1">&#x2669;</option>
+            <option value="2">&#x266A;</option>
+            <option value="3">&#x2669;3</option>
+            <option value="4">&#x266C;</option>
+          </select>
+        </div>
+      </section>
+
+      <!-- Auto-play row -->
+      <section class="controls-row autoplay-row">
+        <div class="control-group">
+          <label for="autoplay-lower" class="control-label">Lower</label>
+          <select id="autoplay-lower"></select>
+        </div>
+
+        <div class="control-group">
+          <label for="autoplay-start" class="control-label">Start</label>
+          <select id="autoplay-start"></select>
+        </div>
+
+        <div class="control-group">
+          <label for="autoplay-upper" class="control-label">Upper</label>
+          <select id="autoplay-upper"></select>
+        </div>
+
+        <button id="autoplay-btn">Play</button>
+      </section>
+
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

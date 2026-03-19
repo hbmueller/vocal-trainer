@@ -1,0 +1,327 @@
+@use 'theme' as *;
+
+// ─── Reset & base ───────────────────────────────────────────────────────────
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background-color: $color-bg;
+  color: $color-text-primary;
+  font-family: system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+}
+
+// ─── App wrapper ────────────────────────────────────────────────────────────
+
+#app {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-xl $spacing-md;
+  min-height: 100%;
+}
+
+// ─── Toggle row section ──────────────────────────────────────────────────────
+
+.toggle-row-section {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+#toggle-row-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+}
+
+// ─── Playback & pitch markers ────────────────────────────────────────────────
+//
+// JS sets --marker-x to a pixel value computed via getBoundingClientRect().
+// translateX(-50%) centres the glyph on that pixel position.
+
+#playback-marker,
+#pitch-marker {
+  position: relative;
+  width: 100%;
+  height: 20px;
+  pointer-events: none;
+  overflow: visible;
+  visibility: hidden; // hidden until JS explicitly shows them
+
+  &::after {
+    position: absolute;
+    top: 0;
+    left: var(--marker-x, -999px);
+    transform: translateX(-50%);
+    font-size: 16px;
+    line-height: 1;
+  }
+}
+
+#playback-marker::after {
+  content: '↓';
+  color: $color-marker-playback;
+  top: 2px;
+}
+
+#pitch-marker {
+  &::after {
+    content: '↑';
+    bottom: 2px;
+    top: auto;
+    transition: left 120ms linear;
+  }
+
+  &.in-tune::after     { color: $color-marker-pitch-in-tune; }
+  &.out-of-tune::after { color: $color-marker-pitch-out-of-tune; }
+}
+
+// ─── Toggle row ──────────────────────────────────────────────────────────────
+
+#toggle-row {
+  display: flex;
+  flex-direction: row;
+  gap: 2px;
+  background-color: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  padding: $spacing-sm;
+}
+
+// ─── Individual toggle labels ─────────────────────────────────────────────────
+
+.toggle-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-xs;
+  cursor: pointer;
+  padding: $spacing-sm $spacing-xs;
+  border-radius: $radius-sm;
+  min-width: 44px;
+  transition: background-color 120ms ease;
+  user-select: none;
+
+  &:hover {
+    background-color: $color-surface-raised;
+  }
+
+  // Hide the native checkbox — the label background reflects state instead
+  input[type='checkbox'].interval-toggle {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+  }
+
+  .note-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: $color-text-primary;
+    letter-spacing: 0.02em;
+  }
+
+  .interval-label {
+    font-size: 11px;
+    color: $color-text-muted;
+    letter-spacing: 0.03em;
+  }
+
+  // Active state: checkbox is checked
+  &:has(input[type='checkbox'].interval-toggle:checked) {
+    background-color: $color-accent-dim;
+
+    .note-name {
+      color: $color-accent;
+    }
+
+    .interval-label {
+      color: $color-accent;
+      opacity: 0.75;
+    }
+  }
+}
+
+// ─── Controls rows ───────────────────────────────────────────────────────────
+
+.controls-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: $spacing-md;
+  width: 100%;
+  max-width: 700px;
+  background-color: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  padding: $spacing-sm $spacing-md;
+}
+
+.control-group {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.control-label {
+  font-size: 12px;
+  color: $color-text-muted;
+  white-space: nowrap;
+}
+
+// ─── Form elements ────────────────────────────────────────────────────────────
+
+select,
+input[type='number'] {
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: $color-surface-raised;
+  color: $color-text-primary;
+  border: 1px solid $color-border;
+  border-radius: $radius-sm;
+  padding: 5px 10px;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 120ms ease, background-color 120ms ease;
+
+  &:hover {
+    border-color: $color-text-muted;
+  }
+
+  &:focus {
+    border-color: $color-accent;
+  }
+}
+
+select {
+  // Custom dropdown arrow
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23666'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  padding-right: 26px;
+}
+
+input[type='number'] {
+  width: 72px;
+  text-align: right;
+
+  // Remove native spinners
+  &::-webkit-inner-spin-button,
+  &::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  -moz-appearance: textfield;
+}
+
+button {
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: $color-btn-bg;
+  color: $color-text-primary;
+  border: 1px solid $color-border;
+  border-radius: $radius-sm;
+  padding: 6px 18px;
+  font-size: 13px;
+  font-family: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  outline: none;
+  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
+
+  &:hover {
+    background-color: $color-btn-hover;
+    border-color: $color-text-muted;
+  }
+
+  &:focus {
+    border-color: $color-accent;
+  }
+
+  &:active,
+  &.is-playing {
+    background-color: $color-btn-active;
+    color: $color-btn-active-text;
+    border-color: $color-btn-active;
+  }
+}
+
+// ─── Auto-play row ────────────────────────────────────────────────────────────
+
+.autoplay-row {
+  #autoplay-btn {
+    margin-left: auto;
+  }
+}
+
+// ─── Pitch trainer row ────────────────────────────────────────────────────────
+
+.pitch-trainer-row {
+  .pitch-trainer-label {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    cursor: pointer;
+    font-size: 13px;
+    color: $color-text-primary;
+    user-select: none;
+
+    input[type='checkbox']#pitch-trainer-toggle {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border: 1px solid $color-border;
+      border-radius: $radius-sm;
+      background-color: $color-surface-raised;
+      cursor: pointer;
+      position: relative;
+      flex-shrink: 0;
+      transition: background-color 120ms ease, border-color 120ms ease;
+
+      &:checked {
+        background-color: $color-accent;
+        border-color: $color-accent;
+
+        &::after {
+          content: '';
+          position: absolute;
+          top: 2px;
+          left: 5px;
+          width: 4px;
+          height: 8px;
+          border: 2px solid #0f0f0f;
+          border-top: none;
+          border-left: none;
+          transform: rotate(45deg);
+        }
+      }
+
+      &:focus {
+        border-color: $color-accent;
+      }
+    }
+  }
+}

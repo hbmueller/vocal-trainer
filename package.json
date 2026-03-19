@@ -1,0 +1,20 @@
+{
+  "name": "vocal-trainer",
+  "version": "0.1.0",
+  "description": "Vocal practice app",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.8.0",
+  "devDependencies": {
+    "sass": "^1.98.0",
+    "typescript": "^5.9.3",
+    "vite": "^8.0.1"
+  }
+}
