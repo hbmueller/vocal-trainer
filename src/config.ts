@@ -11,7 +11,7 @@ export const AUTOPLAY_DEFAULTS = {
 } as const
 
 /** BPM default */
-export const DEFAULT_BPM = 100
+export const DEFAULT_BPM = 90
 
 /** Number of sub-positions per semitone for the pitch marker (≈17 cents each). */
 export const PITCH_MARKER_SUBDIVISIONS = 6

@@ -37,6 +37,7 @@ export function scheduleEPNote(
   frequency: number,
   soundDuration: number,
   startTime: number,
+  gainMultiplier = 1.0,
 ): void {
   // --- Envelope timing ---
   const attackTime   = 0.010                                 // 10 ms
@@ -50,7 +51,7 @@ export function scheduleEPNote(
   waveshaper.oversample = '2x'
 
   const masterGain = ctx.createGain()
-  masterGain.gain.value = 1.0
+  masterGain.gain.value = gainMultiplier
   waveshaper.connect(masterGain)
   masterGain.connect(ctx.destination)
 

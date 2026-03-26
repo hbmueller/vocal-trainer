@@ -13,6 +13,7 @@
 html,
 body {
   height: 100%;
+  overflow-x: auto;
 }
 
 body {
@@ -33,6 +34,7 @@ body {
   gap: $spacing-md;
   padding: $spacing-xl $spacing-md;
   min-height: 100%;
+  min-width: max-content;
 }
 
 #app-title {
@@ -276,16 +278,11 @@ button {
   }
 }
 
-// ─── Row break — forces a flex item onto a new line ──────────────────────────
+// ─── Play once button ────────────────────────────────────────────────────────
 
-.row-break {
-  flex-basis: 100%;
-  padding: 0 !important;
-
-  // The button inside sits at the start of the new line
-  button {
-    min-width: 110px;  // prevents layout shift when text changes between "▶ Play once" / "■ Stop"
-  }
+#play-btn {
+  margin-left: auto;
+  min-width: 110px;  // prevents layout shift when text changes between "▶ Play once" / "■ Stop"
 }
 
 // ─── Auto-play row ────────────────────────────────────────────────────────────

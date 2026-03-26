@@ -11,7 +11,10 @@ export class ToggleRow {
   private readonly playbackMarker: HTMLElement
   private readonly pitchMarker: HTMLElement | null  // optional — not present while pitch trainer is disabled
   private changeCallbacks: Array<() => void> = []
+  private userToggleOnCallbacks: Array<(semitone: number) => void> = []
+  private userChangeCallbacks: Array<() => void> = []
   private currentPlaybackSemitone: number | null = null
+  private _settingIntervals = false
 
   constructor() {
     const checkboxes = Array.from(
@@ -32,8 +35,16 @@ export class ToggleRow {
 
     this.pitchMarker = document.getElementById('pitch-marker')  // null when pitch trainer is disabled
 
-    for (const checkbox of this.checkboxes) {
+    for (let i = 0; i < this.checkboxes.length; i++) {
+      const checkbox = this.checkboxes[i]
+      const semitone = i
       checkbox.addEventListener('change', () => {
+        if (!this._settingIntervals) {
+          if (checkbox.checked) {
+            for (const cb of this.userToggleOnCallbacks) cb(semitone)
+          }
+          for (const cb of this.userChangeCallbacks) cb()
+        }
         for (const cb of this.changeCallbacks) cb()
       })
     }
@@ -48,10 +59,12 @@ export class ToggleRow {
   }
 
   setActiveIntervals(semitones: readonly number[]): void {
+    this._settingIntervals = true
     const activeSet = new Set(semitones)
     for (let i = 0; i < this.checkboxes.length; i++) {
       this.checkboxes[i].checked = activeSet.has(i)
     }
+    this._settingIntervals = false
     for (const cb of this.changeCallbacks) cb()
   }
 
@@ -121,6 +134,16 @@ export class ToggleRow {
 
   onChange(cb: () => void): void {
     this.changeCallbacks.push(cb)
+  }
+
+  /** Fires when the user manually turns a toggle ON (not when set programmatically). */
+  onUserToggleOn(cb: (semitone: number) => void): void {
+    this.userToggleOnCallbacks.push(cb)
+  }
+
+  /** Fires on any user-initiated toggle change (on or off). */
+  onUserChange(cb: () => void): void {
+    this.userChangeCallbacks.push(cb)
   }
 
   /** Computes the pixel offset of a label's centre relative to the marker element. */

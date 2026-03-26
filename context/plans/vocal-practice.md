@@ -46,7 +46,7 @@ src/
     root-selector.ts    # Binds #root-note-select + #root-octave-select; returns absolute note index
     preset-selector.ts  # Binds preset dropdown
     direction-selector.ts
-    tempo-controls.ts   # Binds BPM + subdivision controls
+    tempo-controls.ts   # Binds BPM input (subdivision fixed at quarter notes)
     auto-play.ts        # Binds lower/start/upper selects, drives auto-play logic
     pitch-trainer.ts    # Binds mic toggle; drives pitch marker
   styles/
@@ -60,7 +60,7 @@ src/
 ## Features
 
 ### 1. Sound Generation
-Use the **Web Audio API** to synthesize notes from waveforms (sine wave + short attack/release envelope). This gives zero asset load, low latency, and full control over the sound shape. Sample-based and MIDI approaches are heavier and unnecessary.
+Uses the **Web Audio API** with an electric piano model (`src/audio/electric-piano.ts`): 4 additive sine partials, downward pitch attack for the characteristic EP click, EP-style amplitude envelope (fast attack → exponential decay to 75% sustain), and a soft-clip WaveShaperNode for cabinet warmth. Full parameter rationale in `context/electric-piano-synth.md`.
 
 ### 2. Arpeggio Configuration
 - **Root note selector** — two selects: note name (C–B) + octave (2–6); toggle labels update when either changes
@@ -79,9 +79,8 @@ Dropdown to auto-fill interval toggles and direction for common patterns:
 - Major scale, natural minor, harmonic minor, melodic minor
 - Diatonic modes, pentatonics
 
-### 4. Tempo & Subdivision
-- **BPM control** — numeric input or slider
-- **Subdivision selector** — how many notes per beat (quarter, eighth, triplet, sixteenth); determines how fast arpeggio steps advance relative to BPM
+### 4. Tempo
+- **BPM control** — numeric input; default **90 BPM**; fixed at quarter-note subdivision
 - **Note gap** — each note sounds for `NOTE_GAP_RATIO` (85%) of the beat duration; the remaining 15% is silence to prevent oscillator overlap and click artifacts
 
 ### 5. Single Play
@@ -102,10 +101,13 @@ Defaults are tuned for a tenor (comfortable range C3–C5). All options are cons
 - When lower limit is reached → stop
 
 ### 7. Countdown
-Before each arpeggio run (single play and auto-play), `COUNTDOWN_BEATS` (4) metronome clicks play at the same BPM/subdivision as the notes. Clicks are represented as `CLICK_NOTE = -1` sentinel values prepended to the sequence array; the scheduler plays a short 1200 Hz tone for them without firing the UI `onNote` callback.
+Metronome clicks prepend each arpeggio run, represented as `CLICK_NOTE = -1` sentinel values. The scheduler plays a short 1200 Hz tone for each without firing the UI `onNote` callback.
 
+- **First run** (single play or first auto-play run): **4 clicks**
+- **Inter-run** (between auto-play runs): **3 clicks** — keeps the bar count even
+- On beat 1 of every countdown, the first scale note also plays at reduced volume (~40%) as a pitch anchor
 - Single play: click × 4, arpeggio, stop
-- Auto-play: click × 4, arpeggio, click × 4, arpeggio, …
+- Auto-play: click × 4, arpeggio, click × 3, arpeggio, …
 
 ### 8. Pitch Trainer (Microphone Input)
 
@@ -126,7 +128,7 @@ All controls sit below the main toggle row. Functional, not pretty — visual de
 
 [Root C ▾] [4 ▾]  [▶ Play once]  [Preset ▾]  [Up & Down ▾]
 
-[BPM: 100]  [Subdivision: ♩▾]
+[BPM: 90]
 
 [Lower: C3 ▾]  [Start: C4 ▾]  [Upper: C5 ▾]  [Play ▶ (auto)]
 

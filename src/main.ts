@@ -1,7 +1,9 @@
 import { Synth } from './audio/synth.js'
 import { Scheduler } from './audio/scheduler.js'
+import type { PreviewInfo } from './audio/scheduler.js'
 import { buildSequence } from './music/arpeggio.js'
 import { CLICK_NOTE, COUNTDOWN_BEATS } from './config.js'
+import { noteIndexToFrequency } from './music/notes.js'
 import { PRESETS } from './music/presets.js'
 import { ToggleRow } from './ui/toggle-row.js'
 import { RootSelector } from './ui/root-selector.js'
@@ -49,9 +51,9 @@ function ensureAudio(): void {
 // Sequence helpers
 // ---------------------------------------------------------------------------
 
-/** Prepends COUNTDOWN_BEATS click notes then the arpeggio sequence. */
-function buildCurrentSequence(): number[] {
-  const countdown = Array<number>(COUNTDOWN_BEATS).fill(CLICK_NOTE)
+/** Prepends `countdownBeats` click notes then the arpeggio sequence. */
+function buildCurrentSequence(countdownBeats = COUNTDOWN_BEATS): number[] {
+  const countdown = Array<number>(countdownBeats).fill(CLICK_NOTE)
   const notes     = buildSequence(
     currentRootIndex,
     toggleRow.getActiveIntervals(),
@@ -60,17 +62,25 @@ function buildCurrentSequence(): number[] {
   return [...countdown, ...notes]
 }
 
-function rebuildSequence(): void {
+function rebuildSequence(countdownBeats = COUNTDOWN_BEATS): void {
   if (scheduler === null) return
-  scheduler.updateSequence(buildCurrentSequence())
+  scheduler.updateSequence(buildCurrentSequence(countdownBeats), buildPreviewInfo(countdownBeats))
+}
+
+/** Returns preview info: play first scale note quietly on the last countdown beat only. */
+function buildPreviewInfo(countdownBeats = COUNTDOWN_BEATS): PreviewInfo | null {
+  const notes = buildSequence(currentRootIndex, toggleRow.getActiveIntervals(), directionSelector.getValue())
+  if (notes.length === 0) return null
+  return { noteIndex: notes[0], atPosition: 0 }
 }
 
 // ---------------------------------------------------------------------------
 // Playback helpers
 // ---------------------------------------------------------------------------
 
-const playBtn     = document.getElementById('play-btn') as HTMLButtonElement | null
-const autoplayBtn = document.getElementById('autoplay-btn') as HTMLButtonElement | null
+const playBtn       = document.getElementById('play-btn') as HTMLButtonElement | null
+const autoplayBtn   = document.getElementById('autoplay-btn') as HTMLButtonElement | null
+const presetSelectEl = document.getElementById('preset-select') as HTMLSelectElement | null
 
 // All controls that should be locked while audio is playing
 const lockableControls = Array.from(
@@ -121,6 +131,7 @@ function startSinglePlay(): void {
       toggleRow.setPlaybackMarker(null)
       stopPlayback()
     },
+    buildPreviewInfo(),
   )
 }
 
@@ -140,9 +151,11 @@ function startAutoPlay(): void {
         currentRootIndex = newRoot
         rootSelector.setValue(newRoot)
         toggleRow.updateLabels(newRoot)
-        rebuildSequence()
       }
+      // Inter-run countdown is 3 beats (keeps bar count even)
+      rebuildSequence(3)
     },
+    buildPreviewInfo(),
   )
 }
 
@@ -199,6 +212,17 @@ toggleRow.onChange(() => {
   rebuildSequence()
   updatePlayButtons()
 })
+
+toggleRow.onUserToggleOn((semitone) => {
+  ensureAudio()
+  const ctx  = synth!.getAudioContext()
+  const freq = noteIndexToFrequency(currentRootIndex + semitone)
+  synth!.scheduleNote(ctx, freq, 1.5, ctx.currentTime + 0.01)
+})
+
+toggleRow.onUserChange(() => {
+  if (presetSelectEl !== null) presetSelectEl.value = ''
+})
 directionSelector.onChange(() => { rebuildSequence() })
 
 presetSelector.onChange((preset) => {
@@ -227,7 +251,6 @@ tempoControls.onSubdivisionChange(() => {
 const defaultPreset = PRESETS[0]
 toggleRow.setActiveIntervals(defaultPreset.intervals)
 directionSelector.setValue(defaultPreset.direction)
-const presetSelectEl = document.getElementById('preset-select') as HTMLSelectElement | null
 if (presetSelectEl !== null) presetSelectEl.value = '0'
 
 toggleRow.updateLabels(currentRootIndex)

@@ -21,6 +21,12 @@ export class Synth {
     scheduleEPNote(ctx, frequency, soundDuration, startTime)
   }
 
+  /** Schedules a quieter version of the EP note (used for countdown preview). */
+  scheduleNoteQuiet(ctx: AudioContext, frequency: number, beatDuration: number, startTime: number): void {
+    const soundDuration = beatDuration * NOTE_GAP_RATIO
+    scheduleEPNote(ctx, frequency, soundDuration, startTime, 0.40)
+  }
+
   /**
    * Schedules a short metronome click at an absolute AudioContext time.
    * Used for the countdown before each arpeggio run.
