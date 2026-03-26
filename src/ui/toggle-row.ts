@@ -92,7 +92,10 @@ export class ToggleRow {
       return
     }
     const x = this.markerXForLabel(this.playbackMarker, this.labels[semitoneOffset])
-    if (x === null) return
+    if (x === null) {
+      this.playbackMarker.style.visibility = 'hidden'
+      return
+    }
     this.playbackMarker.style.setProperty('--marker-x', `${x}px`)
     this.playbackMarker.style.visibility = 'visible'
   }

@@ -97,7 +97,7 @@ export class Scheduler {
       if (noteIndex === CLICK_NOTE) {
         // Metronome click — schedule sound but don't fire onNote
         this.synth.scheduleClick(ctx, duration, scheduleTime)
-        // During the last 2 countdown beats, also play the first scale note quietly
+        // On the specified countdown beat, also play the first scale note quietly
         const preview = this._previewInfo
         if (preview !== null && this.currentNoteInRun === preview.atPosition) {
           this.synth.scheduleNoteQuiet(ctx, noteIndexToFrequency(preview.noteIndex), duration, scheduleTime)

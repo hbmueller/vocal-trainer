@@ -1,4 +1,3 @@
-import { INTERVALS } from './intervals.js'
 import type { Interval } from './intervals.js'
 
 export type { Interval }
@@ -8,9 +7,6 @@ export interface Preset {
   intervals: readonly number[]
   direction: 'up' | 'down' | 'up-down' | 'down-up'
 }
-
-// Ensure INTERVALS is imported so it is available for any future runtime validation.
-void INTERVALS
 
 export const PRESETS: readonly Preset[] = [
   {

@@ -9,6 +9,9 @@ export class Synth {
     if (this.ctx === null) {
       this.ctx = new AudioContext()
     }
+    if (this.ctx.state === 'suspended') {
+      void this.ctx.resume()
+    }
     return this.ctx
   }
 

@@ -75,14 +75,14 @@ export class AutoPlay {
   private activate(): void {
     this._isPlaying = true
     this.goingUp = true
-    this.btn.textContent = 'Stop'
-    this.btn.classList.add('active')
+    this.btn.textContent = '■ Stop'
+    this.btn.classList.add('is-playing')
   }
 
   private deactivate(): void {
     this._isPlaying = false
-    this.btn.textContent = 'Play'
-    this.btn.classList.remove('active')
+    this.btn.textContent = '▶ Auto play'
+    this.btn.classList.remove('is-playing')
   }
 
   getLower(): number {

@@ -37,8 +37,4 @@ export class TempoControls {
   onBpmChange(cb: (bpm: number) => void): void {
     this.bpmCallbacks.push(cb)
   }
-
-  onSubdivisionChange(_cb: (subdivision: number) => void): void {
-    // subdivision is fixed at 1; kept for interface compatibility
-  }
 }

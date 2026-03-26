@@ -237,11 +237,6 @@ tempoControls.onBpmChange(() => {
   else if (playMode === 'auto') startAutoPlay()
 })
 
-tempoControls.onSubdivisionChange(() => {
-  if (scheduler === null || !scheduler.isPlaying) return
-  if (playMode === 'single') startSinglePlay()
-  else if (playMode === 'auto') startAutoPlay()
-})
 
 // ---------------------------------------------------------------------------
 // Initial state
